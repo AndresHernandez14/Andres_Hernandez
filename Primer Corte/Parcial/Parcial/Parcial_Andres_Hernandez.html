@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Parcial_Andres_Hernandez</title>
+        <style>
+            html, body { margin: 0; padding: 0; overflow: hidden; }
+            #info {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">
+            
+            Parcial Primer Corte<br />
+            ANDRES HERNANDEZ LOPEZ 6000346<br />
+            SISTEMA SOLAR<br />
+            
+        </div>
+        <script src="js/three.min.js"></script>
+        <script>
+            
+        var scene, aspect, camera, renderer;
+
+        init();
+        animate();
+        
+           function init() {
+                scene = new THREE.Scene();
+                aspect = window.innerWidth / window.innerHeight;
+                camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+               
+								  
+			var size = 50; //TAMAÑO DE LA ESCENA	
+
+            //CREAR LOS MATERIALES DE LOS PLANETAS
+                             
+            var sphereGeometry = new THREE.SphereGeometry(0.3,32,32);
+            var sphereMaterial = new THREE.MeshBasicMaterial()
+            var matTierra = new THREE.MeshBasicMaterial ({color: 0x00AA00, size: 0.1});
+            var matSol = new THREE.MeshBasicMaterial ({color: 0xFFFF33, size: 0.1});
+            var matLuna = new THREE.MeshBasicMaterial ({color: 0xFFFFFF, size: 0.1});
+            var matMarte = new THREE.MeshBasicMaterial ({color: 0xFF3300, size: 0.1});
+            var matMercurio = new THREE.MeshBasicMaterial ({color: 0xFF0000, size: 0.1});
+            var matVenus = new THREE.MeshBasicMaterial ({color: 0xCC9900, size: 0.1});
+            var matJupiter = new THREE.MeshBasicMaterial ({color: 0xFFFF99, size: 0.1});
+            var matLuna_j = new THREE.MeshBasicMaterial ({color: 0xFFFFFF, size: 0.1});
+            var matLuna_ju = new THREE.MeshBasicMaterial ({color: 0xFFFFFF, size: 0.1});
+            var matLuna_jup = new THREE.MeshBasicMaterial ({color: 0xFFFFFF, size: 0.1});
+            var matUrano = new THREE.MeshBasicMaterial ({color: 0x3399FF, size: 0.1});
+            
+
+            //CREAR LOS PLANETAS Y POSICIONARLOS
+            //SOL        
+            Sol = new THREE.Mesh(sphereGeometry, matSol);
+            Sol.applyMatrix( new THREE.Matrix4().makeScale(10,10,10) );
+               
+            //TIERRA
+            tierra = new THREE.Mesh(sphereGeometry, matTierra);
+            tierra.applyMatrix( new THREE.Matrix4().makeScale(.5,.5,.5) );
+            tierra.applyMatrix( new THREE.Matrix4().makeTranslation(2,0,0) );
+               
+            //LUNA
+            luna = new THREE.Mesh(sphereGeometry, matLuna);
+            luna.applyMatrix( new THREE.Matrix4().makeScale(.2,.2,.2) );
+            luna.applyMatrix( new THREE.Matrix4().makeTranslation(1,0,0) );
+               
+            //MERCURIO
+            mercurio = new THREE.Mesh(sphereGeometry, matMercurio);
+            mercurio.applyMatrix( new THREE.Matrix4().makeScale(.2,.2,.2) );
+            mercurio.applyMatrix( new THREE.Matrix4().makeTranslation(.5,0,.5) );            
+               
+               
+            //MARTE
+            marte = new THREE.Mesh(sphereGeometry, matMarte);
+            marte.applyMatrix( new THREE.Matrix4().makeScale(.4,.4,.4) );
+            marte.applyMatrix( new THREE.Matrix4().makeTranslation(-1,0,1) );
+               
+            //VENUS
+            venus = new THREE.Mesh(sphereGeometry, matVenus);
+            venus.applyMatrix( new THREE.Matrix4().makeScale(.3,.3,.3) );
+            venus.applyMatrix( new THREE.Matrix4().makeTranslation(-1,0,0) );
+            
+            //JUPITER
+            jupiter = new THREE.Mesh(sphereGeometry, matJupiter);
+            jupiter.applyMatrix( new THREE.Matrix4().makeScale(.7,.7,.7) );
+            jupiter.applyMatrix( new THREE.Matrix4().makeTranslation(-1.5,0,-1.5) );
+               
+            //LUNA_1 JUPITER
+            luna_j = new THREE.Mesh(sphereGeometry, matLuna_j);
+            luna_j.applyMatrix( new THREE.Matrix4().makeScale(.2,.2,.2) );
+            luna_j.applyMatrix( new THREE.Matrix4().makeTranslation(.4,0,-.5) );
+               
+            //LUNA_2 JUPITER
+            luna_ju = new THREE.Mesh(sphereGeometry, matLuna_ju);
+            luna_ju.applyMatrix( new THREE.Matrix4().makeScale(.2,.2,.2) );
+            luna_ju.applyMatrix( new THREE.Matrix4().makeTranslation(-.4,0,-.5) );
+               
+            //LUNA_3 JUPITER
+            luna_jup = new THREE.Mesh(sphereGeometry, matLuna_jup);
+            luna_jup.applyMatrix( new THREE.Matrix4().makeScale(.2,.2,.2) );
+            luna_jup.applyMatrix( new THREE.Matrix4().makeTranslation(.4,0,.7) );
+               
+            //URANO
+            urano = new THREE.Mesh(sphereGeometry, matUrano);
+            urano.applyMatrix( new THREE.Matrix4().makeScale(.5,.5,.5) );
+            urano.applyMatrix( new THREE.Matrix4().makeTranslation(.2,0,-2) );           
+            
+               
+            //AGREGAR LOS OBJETOS 
+            Sol.add(tierra);
+            tierra.add(luna);
+            Sol.add(marte);
+            Sol.add(mercurio);   
+            Sol.add(venus);
+            Sol.add(jupiter);
+            jupiter.add(luna_j);
+            jupiter.add(luna_ju);
+            jupiter.add(luna_jup);
+            Sol.add(urano);            
+
+            //MOSTRAR ESCENA         
+		    scene.add(Sol);        
+            
+            //MOVER LA CAMARA
+			camera.position.x = 10;
+			camera.position.y = 50;	 
+		  	camera.position.z = 15;			
+		  	camera.lookAt( origin );
+        }
+            
+        function animate() {
+                render();
+                requestAnimationFrame(animate);				
+        }    
+			
+        function render() {               
+		    camera.lookAt( 0, 0, 0 );
+            var animate = function () {
+				requestAnimationFrame( animate );
+				renderer.render( scene, camera );                
+                tierra.rotateY(0.00003);
+                Sol.rotateY(0.000007);
+                marte.rotateY(0.00005);
+                jupiter.rotateY(0.00001);
+			};
+            
+            animate();        
+
+        }
+			
+		</script>
+	</body>
+</html>
