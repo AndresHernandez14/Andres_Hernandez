@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Parcial_Andres_Hernandez</title>
+        <style>
+            html, body { margin: 0; padding: 0; overflow: hidden; }
+            #info {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">
+            
+            Primer Ejercicio<br />
+            ANDRES HERNANDEZ LOPEZ 6000346<br />            
+        </div>
+        <script src="js/three.min.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/csg.js"></script>
+	    <script src="js/THREE.CSG.js"></script> 
+        
+        <script>
+            
+            var scene, aspect, camera, renderer, geometry, object, controls;
+            
+            init();
+            animate();
+
+            function init() {
+                scene = new THREE.Scene();
+                aspect = window.innerWidth / window.innerHeight;
+                camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+                controls = new THREE.OrbitControls( camera, renderer.domElement );               
+
+                //ELEMENTOS DE ESCENA
+                var size = 10;
+                var arrowSize = 6;
+                var divisions = size;
+                var origin = new THREE.Vector3(0, 0, 0);
+                var x = new THREE.Vector3(3, 0, 0);
+                var y = new THREE.Vector3(0, 3, 0);
+                var z = new THREE.Vector3(0, 0, 3);
+              
+                //CREAR ILUMINACIÓN
+                var ambient = new THREE.AmbientLight( 0xffffff, 2 );
+                scene.add( ambient );
+			
+                var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
+                pointLight.position.set( -5, -2, 5 );
+                scene.add( pointLight );
+			
+                var pointLight = new THREE.PointLight( 0xffffff, .5, 100 );
+                pointLight.position.set( 5, -2, -5 );
+                scene.add( pointLight );
+
+                //CREAR LAS GEOMETRÍA 
+                var geoPlano = new THREE.BoxGeometry(20,10,1.5); //TAMAÑO DE LA PANTALLA
+                var geoPlanoB = new THREE.BoxGeometry(5,5,1.5); //TAMAÑO DE LA BASE
+                var geoPlanoC = new THREE.BoxGeometry(19,9,1); //TAMAÑO DE LA PANTALLA INTERIOR
+                var geoPC = new THREE.BoxGeometry(8,15,20); //DIMENSIONES DE LA TORRE
+                var CylinderGeometry = new THREE.CylinderGeometry(1,1,5,25,1); // UNION PANTALLA BASE
+
+                //CREAR LOS MATERIALES
+                var matPlano = new THREE.MeshStandardMaterial( { color: 0xCC0000, side: THREE.DoubleSide } );
+                var matPlano2 = new THREE.MeshStandardMaterial( { color: 0x66FF00, side: THREE.DoubleSide } );
+               
+
+                //CREAR LOS OBJETOS
+                CuadradoPantalla = new THREE.Mesh( geoPlano, matPlano );
+                CuadradoPantalla.applyMatrix( new THREE.Matrix4().makeTranslation(0,5,-0.5) );                
+                CuadradoBase = new THREE.Mesh(geoPlanoB, matPlano);
+                CuadradoBase.applyMatrix( new THREE.Matrix4().makeRotationX(1.6) );  
+                CuadradoBase.applyMatrix( new THREE.Matrix4().makeTranslation(0,-3,-2) );  
+                Cilindro = new THREE.Mesh (CylinderGeometry, matPlano);
+                Cilindro.applyMatrix( new THREE.Matrix4().makeRotationX(0.4) ); 
+                Cilindro.applyMatrix( new THREE.Matrix4().makeTranslation(0,-1,-2) );  
+                PlanoPantalla = new THREE.Mesh(geoPlanoC, matPlano2);
+                PlanoPantalla.applyMatrix( new THREE.Matrix4().makeTranslation(0,5,0.0) ); 
+                PCTorre = new THREE.Mesh(geoPC, matPlano); 
+                PCTorre.applyMatrix( new THREE.Matrix4().makeTranslation(-16,3.5,6) );               
+
+
+                //CONVERTIR A CSG
+                var boxCSG = THREE.CSG.fromMesh( CuadradoBase);
+                var boxCSG2 = THREE.CSG.fromMesh( CuadradoPantalla);
+			    var CylinderCSG = THREE.CSG.fromMesh(Cilindro);
+			    var result = boxCSG.union(CylinderCSG);	
+                var result2 = CylinderCSG.union(boxCSG2);
+
+                //CONVERTIR A THREE
+			    cube = THREE.CSG.toMesh( result );
+			    cube.material = matPlano;
+                cube2 = THREE.CSG.toMesh( result2 );            
+			    cube2.material = matPlano;
+			
+			    //AGREGAR A LA ESCENA LOS DIFERENTES ELEMENTOS
+			    scene.add( cube );
+                scene.add(cube2);
+
+                var curve2D = [];
+                curve2D[0] = new THREE.Vector2( 1, -5 );
+                curve2D[1] = new THREE.Vector2( 3, -7 );
+                curve2D[2] = new THREE.Vector2( 1, -8 );
+                curve2D[3] = new THREE.Vector2( -3, -9 );
+                curve2D[4] = new THREE.Vector2( -4, -9 );
+                curve2D[5] = new THREE.Vector2( -6, -7 );
+                curve2D[5] = new THREE.Vector2( -9, -7 );
+                curve2D[6] = new THREE.Vector2( -10, -5 );		
+                curve2D[7] = new THREE.Vector2( -13, -5 );
+                curve2D[8] = new THREE.Vector2( -15, -7);
+                curve2D[9] = new THREE.Vector2( -17, -6 );
+                curve2D[10] = new THREE.Vector2( -17, -5 );
+                curve2D[11] = new THREE.Vector2( -17, -3 );
+                curve2D[12] = new THREE.Vector2( -16, -2 );
+                curve2D[13] = new THREE.Vector2( -14, 0 );
+                curve2D[14] = new THREE.Vector2( -14, 0.2 );
+                curve2D[15] = new THREE.Vector2( -16, -2.2 );
+                curve2D[16] = new THREE.Vector2( -17, -3.2 );
+                curve2D[17] = new THREE.Vector2( -17,  -5.2 );
+                curve2D[18] = new THREE.Vector2( -17,  -6.2 );
+                curve2D[19] = new THREE.Vector2( -15,  -7.2 );
+                curve2D[20] = new THREE.Vector2( -13,  -5.2 );
+                curve2D[21] = new THREE.Vector2( -10, -5.2 );		
+                curve2D[22] = new THREE.Vector2( -9, -7.2 );
+                curve2D[23] = new THREE.Vector2( -6, -7.2);
+                curve2D[24] = new THREE.Vector2( -4, -9.2 );
+                curve2D[25] = new THREE.Vector2( -3, -9.2 );
+                curve2D[26] = new THREE.Vector2( 1, -8.2 );
+                curve2D[27] = new THREE.Vector2( 3, -7.2 );
+                curve2D[28] = new THREE.Vector2( 1, -5.2 ); 
+			
+			var shape = new THREE.Shape();
+			shape.moveTo(0,0);
+			shape.splineThru(curve2D);
+            
+            var material = new THREE.LineBasicMaterial( { color : 0xCC0000 } );
+            var resolution = 50;
+            var points = shape.getPoints( resolution );
+            var geometry = new THREE.BufferGeometry().setFromPoints( points );
+            var curveObject = new THREE.Line( geometry, material );
+            
+			//EXTRUSION
+			var extrudeSettings = {
+				steps: 1,
+				amount: .5,
+				bevelEnabled: false,
+			};
+
+            var geometryExt = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+			var materialExt= new THREE.MeshStandardMaterial( { 
+				color: 0x66FF00, 
+				metalness: 0.5, 
+				roughness: 0.1,
+				transparent: true			
+			} );
+			
+			var mesh = new THREE.Mesh( geometryExt, materialExt ) ;
+			mesh.translateY(-3);
+            mesh.rotateX( 1.57 );
+			scene.add( mesh );
+
+                //AGREGAR A LA ESCENA
+                
+                scene.add(PlanoPantalla);
+                scene.add(PCTorre);
+               
+                //MOVER LA CAMARA
+                camera.position.x = 5;
+                camera.position.y = 10;
+                camera.position.z = 30;
+                camera.lookAt(origin);
+            }
+            
+            function animate() {
+                render();
+                requestAnimationFrame(animate);
+                controls.update();
+            }
+
+            function render() {                                
+                camera.lookAt(0, 0, 0);
+                renderer.render(scene, camera);
+            }
+        </script>
+    </body>
+</html>
