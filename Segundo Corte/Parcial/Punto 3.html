@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> AUTO </title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.js"></script>
+	<script src="js/OrbitControls.js"></script>
+	<script src="js/csg.js"></script>
+	<script src="js/THREE.CSG.js"></script>
+    <script>
+		var scene, aspect, camera, renderer, controls;
+		init();
+		animate();
+		function init(){
+			//INICIALIZACIÓN
+	        scene = new THREE.Scene();
+	        aspect = window.innerWidth / window.innerHeight;
+	        camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000);
+	        renderer = new THREE.WebGLRenderer();
+	        renderer.setSize( window.innerWidth, window.innerHeight );
+	        document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			//ELEMENTOS COMUNES
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+		  	var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA3333 );
+		  	var colorG = new THREE.Color( 0x33AA33 );
+		  	var colorB = new THREE.Color( 0x333366 );
+			
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+			scene.add( axesHelper );
+			
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color1, color1 );
+			scene.add( gridHelperXZ );
+            
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+
+            //CREAR ILUMINACIÓN
+            var ambient = new THREE.AmbientLight( 0xffffff, 2 );
+            scene.add( ambient );
+			
+            var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
+            pointLight.position.set( -5, -2, 5 );
+            scene.add( pointLight );
+			
+            var pointLight = new THREE.PointLight( 0xffffff, .5, 100 );
+            pointLight.position.set( 5, -2, -5 );
+            scene.add( pointLight );
+			
+			//CREAR LAS GEOMETRÍAS
+			var Geobox = new THREE.BoxGeometry(.8, .5, 2.3);
+			var Geoboxsuelo = new THREE.BoxGeometry(8, 4, 6);
+			var Geoboxretro = new THREE.BoxGeometry(.3, 1, 1.5);
+			var Geobox1 = new THREE.BoxGeometry(17, 2.5, 15);
+			var Geobox2 = new THREE.BoxGeometry(2, 2, 4);
+			var Geocilindro = new THREE.CylinderGeometry( 3, 3, 2, 100, 1);
+			var Geocilindro1 = new THREE.CylinderGeometry( 2.3, 2.3, 5, 100, 1);
+			var Geocilindro2 = new THREE.CylinderGeometry( .6, .6, .5, 100, 1);
+			var Geocilindro3 = new THREE.CylinderGeometry( 1, 1, 1, 100, 1);
+			var Geocilindro4 = new THREE.CylinderGeometry( .2, .2, 1, 100, 1);
+			var CilindroLuz1= new THREE.CylinderGeometry( 1, 1, 1, 100, 1);
+			var CilindroLuz2= new THREE.CylinderGeometry( .5, .5, 1.2, 100, 1);
+			var Cilindroex= new THREE.CylinderGeometry( .8, .8, 1, 100, 1);
+			var Cilindroexres= new THREE.CylinderGeometry( .7, .7, 1.2, 100, 1);
+			var Resplaca = new THREE.BoxGeometry(1, 3, 6);
+			var Resplaca1 = new THREE.BoxGeometry(1.5, 5, 6);
+			var GeoPlano = new THREE.PlaneGeometry(15, 4.5);
+			var GeoPlano2 = new THREE.PlaneGeometry(15, 10.5);
+			var GeoPlano3 = new THREE.PlaneGeometry(3.5, 2,);
+			var Geosphere = new THREE.SphereGeometry( .5, 32, 32 );
+			var Geosphere1 = new THREE.SphereGeometry( 3, 32, 32 );
+						
+			//CREAR LOS MATERIALES
+            var material1 = new THREE.MeshStandardMaterial( { color: colorR, metalness: 0.5, roughness: 0.1 } );
+			var material2 = new THREE.MeshStandardMaterial( { color: colorG, metalness: 0.5, roughness: 0.1 } );
+			var material3 = new THREE.MeshStandardMaterial( { color: colorB, metalness: 0.5, roughness: 0.1 } );
+			var material4 = new THREE.MeshStandardMaterial( { color: 0xFFFFFF, metalness: 0.5, roughness: 0.1 } );	
+			var material5 = new THREE.MeshStandardMaterial( { color: 0x99FFFF, metalness: 0.5, roughness: 0.5, opacity: 0.30, transparent: true} );		
+			var material6 = new THREE.MeshStandardMaterial( { color: 0xCCFF00, metalness: 0.5, roughness: 0.5, opacity: 1, transparent: true} );	
+
+			
+			//CREAR LAS MALLAS
+//---------------------------------------------------------------------------------------------------
+
+			var Suelo_1 = new THREE.Mesh(Geoboxsuelo, material3);
+			Suelo_1.translateX(-14);
+			Suelo_1.translateZ(2);
+			Suelo_1.translateY(2);
+			scene.add(Suelo_1);
+
+			var Suelo_2 = new THREE.Mesh(Geoboxsuelo, material3);
+			Suelo_2.translateX(13);
+			Suelo_2.translateZ(2);
+			Suelo_2.translateY(2);
+			scene.add(Suelo_2);
+
+
+//---------------------------------------------------------------------------------------------------
+			//RETROVISORES
+			var Cilretro = new THREE.Mesh(Geocilindro4, material3)
+			Cilretro.translateZ(10.4);
+			Cilretro.translateY(6);
+			Cilretro.translateX(4);
+			Cilretro.rotateX(1);
+			scene.add(Cilretro);
+
+			var Cilretro1 = new THREE.Mesh(Geocilindro4,material3);
+			Cilretro1.translateZ(-6.5);
+			Cilretro1.translateY(6);
+			Cilretro1.translateX(4);
+			Cilretro1.rotateX(-1);
+			scene.add(Cilretro1);
+
+			var Retrovisor_1 = new THREE.Mesh(Geoboxretro, material3);
+			Retrovisor_1.translateZ(11.5);
+			Retrovisor_1.translateY(6.5);
+			Retrovisor_1.translateX(4);
+			scene.add(Retrovisor_1);
+
+			var Retrovisor_2 = new THREE.Mesh(Geoboxretro, material3);
+			Retrovisor_2.translateZ(-7.5);
+			Retrovisor_2.translateY(6.5);
+			Retrovisor_2.translateX(4);
+			scene.add(Retrovisor_2);
+
+
+
+
+		
+//----------------------------------------------------------------------------------------------------
+			//LUCES DELANETERAS
+			var RestaLuz = new THREE.Mesh(Geobox2, material5);
+			RestaLuz.translateX(18.2)
+			RestaLuz.translateZ(7.6);
+			RestaLuz.translateY(4.5);
+			RestaLuz.rotateY(1.57);
+			RestaLuz.rotateX(0.3);
+			//scene.add(RestaLuz);
+
+			var RestaLuz1 = new THREE.Mesh(Geobox2, material5);
+			RestaLuz1.translateX(18.2)
+			RestaLuz1.translateZ(-4);
+			RestaLuz1.translateY(4.5);
+			RestaLuz1.rotateY(1.57);
+			RestaLuz1.rotateX(0.3);
+			//scene.add(RestaLuz1);
+
+			var Luzint = new THREE.Mesh(Geosphere, material2);
+			Luzint.translateY(4.2);
+			Luzint.translateX(19);
+			Luzint.translateZ(7.6);
+			scene.add(Luzint);
+
+			var Luzint1 = new THREE.Mesh(Geosphere, material2);
+			Luzint1.translateY(4.2);
+			Luzint1.translateX(19);
+			Luzint1.translateZ(-4);
+			scene.add(Luzint1);
+
+			var Luzint2 = new THREE.Mesh(Geosphere);
+			Luzint2.translateY(4.5);
+			Luzint2.translateX(17.5);
+			Luzint2.translateZ(7.6);
+			scene.add(Luzint2);
+
+			var Luzint3 = new THREE.Mesh(Geosphere);
+			Luzint3.translateY(4.5);
+			Luzint3.translateX(17.5);
+			Luzint3.translateZ(-4);
+			scene.add(Luzint3);
+
+			var RestaFarol = new THREE.Mesh(Geosphere1, material5);
+			RestaFarol.translateX(17.2);
+			RestaFarol.translateZ(-4);
+			RestaFarol.translateY(4);
+			RestaFarol.rotateY(1.57);
+			RestaFarol.rotateX(0.3);
+			//scene.add(RestaFarol);
+
+			var RestaFarol1 = new THREE.Mesh(Geosphere1, material5);
+			RestaFarol1.translateX(17.2);
+			RestaFarol1.translateZ(7.6);
+			RestaFarol1.translateY(4);
+			RestaFarol1.rotateY(1.57);
+			RestaFarol1.rotateX(0.3);
+			//scene.add(RestaFarol1);
+
+
+		
+
+//-------------------------------------------------------------------------------------------------------
+			//EXOSTOS
+			var ExostoEx = new THREE.Mesh(Cilindroex);
+			var ExostoRes = new THREE.Mesh(Cilindroexres);
+
+			//Placas
+			var Placa1 = new THREE.Mesh(GeoPlano3);
+			Placa1.rotateY(-1.57);
+			Placa1.translateZ(21.2);
+			Placa1.translateY(3);
+			Placa1.translateX(2.1);
+			scene.add(Placa1);
+
+			var Placa2 = new THREE.Mesh(GeoPlano3);
+			Placa2.rotateY(1.57);
+			Placa2.translateZ(20);
+			Placa2.translateY(1.5);
+			Placa2.translateX(-1.7);
+			scene.add(Placa2);  
+
+			var RestaPlaca = new THREE.Mesh(Resplaca);
+			RestaPlaca.translateX(-21.6);
+			RestaPlaca.translateZ(2.3);
+			RestaPlaca.translateY(3);
+
+			
+			var RestaPlaca1 = new THREE.Mesh(Resplaca1);
+			RestaPlaca1.translateX(20.7);
+			RestaPlaca1.translateZ(1.8);
+			RestaPlaca1.translateY(1);
+
+			//VENTANAS
+
+			var Ventana1 = new THREE.Mesh(GeoPlano, material5);
+			Ventana1.rotateY(1.57);
+			Ventana1.translateY(8);
+			Ventana1.translateZ(2.5);
+			Ventana1.translateX(-2);
+			Ventana1.rotateX(-0.95);
+			scene.add(Ventana1);
+
+			
+			var Ventana2 = new THREE.Mesh(GeoPlano2, material5);
+			Ventana2.rotateY(-1.57);
+			Ventana2.translateY(8.3);
+			Ventana2.translateZ(10);
+			Ventana2.translateX(2);
+			Ventana2.rotateX(-1.4);			
+			scene.add(Ventana2);
+		
+			
+			var VentanaF = new THREE.Mesh(Geobox1);
+			VentanaF.translateZ(2);
+			VentanaF.translateY(8);
+			VentanaF.translateX(-3.8);
+
+//-------------------------------------------------------------------------------------------
+
+			//LLANTA_1
+			var Llanta = new THREE.Mesh( Geocilindro );
+			var LlantaRes = new THREE.Mesh(Geocilindro1);
+			var IntRin = new THREE.Mesh(Geocilindro2)
+			IntRin.translateZ(.7);
+			//RIN_1
+			var Rin_1 = new THREE.Mesh(Geobox);
+			var RinRes_1 = new THREE.Mesh(Geocilindro3);
+			RinRes_1.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_2
+			var Rin_2 = new THREE.Mesh(Geobox);
+			var RinRes_2 = new THREE.Mesh(Geocilindro3);
+			RinRes_2.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_3
+			var Rin_3 = new THREE.Mesh(Geobox);
+			var RinRes_3 = new THREE.Mesh(Geocilindro3);
+			RinRes_3.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+
+			//UBICACION RIN_1
+			Rin_1.translateY(.7);
+			RinRes_1.translateY(.7);
+			Rin_1.translateZ(1.3);
+			RinRes_1.translateZ(1.3);
+			//UBICACION RIN_2
+			Rin_2.rotateY(1);
+			RinRes_2.rotateY(1);
+			Rin_2.translateY(.7);
+			RinRes_2.translateY(.7);
+			Rin_2.translateZ(-1.3);
+			RinRes_2.translateZ(-1.3);
+			//UBICACION RIN_3
+			Rin_3.rotateY(-1);
+			RinRes_3.rotateY(-1);
+			Rin_3.translateY(.7);
+			RinRes_3.translateY(.7);
+			Rin_3.translateZ(-1.3);
+			RinRes_3.translateZ(-1.3);
+			
+//----------------------------------------------------------------------------------
+
+			//LLANTA_2
+			var Llanta_2 = new THREE.Mesh( Geocilindro );
+			var LlantaRes_2 = new THREE.Mesh(Geocilindro1);
+			var IntRin_2 = new THREE.Mesh(Geocilindro2)
+			IntRin_2.translateZ(-.7);
+			//RIN_4
+			var Rin_4 = new THREE.Mesh(Geobox);
+			var RinRes_4 = new THREE.Mesh(Geocilindro3);
+			RinRes_4.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_5
+			var Rin_5 = new THREE.Mesh(Geobox);
+			var RinRes_5 = new THREE.Mesh(Geocilindro3);
+			RinRes_5.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_6
+			var Rin_6 = new THREE.Mesh(Geobox);
+			var RinRes_6 = new THREE.Mesh(Geocilindro3);
+			RinRes_6.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+
+			//UBICACION RIN_4
+			Rin_4.translateY(.7);
+			RinRes_4.translateY(.7);
+			Rin_4.translateZ(1.3);
+			RinRes_4.translateZ(1.3);
+			//UBICACION RIN_5
+			Rin_5.rotateY(1);
+			RinRes_5.rotateY(1);
+			Rin_5.translateY(.7);
+			RinRes_5.translateY(.7);
+			Rin_5.translateZ(-1.3);
+			RinRes_5.translateZ(-1.3);
+			//UBICACION RIN_6
+			Rin_6.rotateY(-1);
+			RinRes_6.rotateY(-1);
+			Rin_6.translateY(.7);
+			RinRes_6.translateY(.7);
+			Rin_6.translateZ(-1.3);
+			RinRes_6.translateZ(-1.3);
+
+//---------------------------------------------------------------------------------
+
+			//LLANTA_3
+			var Llanta_3 = new THREE.Mesh( Geocilindro );
+			var LlantaRes_3 = new THREE.Mesh(Geocilindro1);
+			var IntRin_3 = new THREE.Mesh(Geocilindro2)
+			IntRin_3.translateZ(.7);
+			//RIN_7
+			var Rin_7 = new THREE.Mesh(Geobox);
+			var RinRes_7 = new THREE.Mesh(Geocilindro3);
+			RinRes_7.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_8
+			var Rin_8 = new THREE.Mesh(Geobox);
+			var RinRes_8 = new THREE.Mesh(Geocilindro3);
+			RinRes_8.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_9
+			var Rin_9 = new THREE.Mesh(Geobox);
+			var RinRes_9 = new THREE.Mesh(Geocilindro3);
+			RinRes_9.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+
+			//UBICACION RIN_7
+			Rin_7.translateY(.7);
+			RinRes_7.translateY(.7);
+			Rin_7.translateZ(1.3);
+			RinRes_7.translateZ(1.3);
+			//UBICACION RIN_8
+			Rin_8.rotateY(1);
+			RinRes_8.rotateY(1);
+			Rin_8.translateY(.7);
+			RinRes_8.translateY(.7);
+			Rin_8.translateZ(-1.3);
+			RinRes_8.translateZ(-1.3);
+			//UBICACION RIN_9
+			Rin_9.rotateY(-1);
+			RinRes_9.rotateY(-1);
+			Rin_9.translateY(.7);
+			RinRes_9.translateY(.7);
+			Rin_9.translateZ(-1.3);
+			RinRes_9.translateZ(-1.3);
+
+//---------------------------------------------------------------------------------
+
+			//LLANTA_4
+			var Llanta_4 = new THREE.Mesh( Geocilindro );
+			var LlantaRes_4 = new THREE.Mesh(Geocilindro1);
+			var IntRin_4 = new THREE.Mesh(Geocilindro2)
+			IntRin_4.translateZ(-.7);
+			//RIN_10
+			var Rin_10 = new THREE.Mesh(Geobox);
+			var RinRes_10 = new THREE.Mesh(Geocilindro3);
+			RinRes_10.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_11
+			var Rin_11 = new THREE.Mesh(Geobox);
+			var RinRes_11 = new THREE.Mesh(Geocilindro3);
+			RinRes_11.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+			//RIN_12
+			var Rin_12 = new THREE.Mesh(Geobox);
+			var RinRes_12 = new THREE.Mesh(Geocilindro3);
+			RinRes_12.applyMatrix( new THREE.Matrix4().makeScale(.3,1,.7) );
+
+			//UBICACION RIN_10
+			Rin_10.translateY(.7);
+			RinRes_10.translateY(.7);
+			Rin_10.translateZ(1.3);
+			RinRes_10.translateZ(1.3);
+			//UBICACION RIN_11
+			Rin_11.rotateY(1);
+			RinRes_11.rotateY(1);
+			Rin_11.translateY(.7);
+			RinRes_11.translateY(.7);
+			Rin_11.translateZ(-1.3);
+			RinRes_11.translateZ(-1.3);
+			//UBICACION RIN_12
+			Rin_12.rotateY(-1);
+			RinRes_12.rotateY(-1);
+			Rin_12.translateY(.7);
+			RinRes_12.translateY(.7);
+			Rin_12.translateZ(-1.3);
+			RinRes_12.translateZ(-1.3); 
+
+//------------------------------------------------------------------------------------------------------
+			//LUCES TRACERAS
+			//LUZ_1
+			var Luzgrande = new THREE.Mesh(CilindroLuz1);
+			var LuzPeque = new  THREE.Mesh(CilindroLuz2);
+
+			//LUZ_2	
+			var Luzgrande1 = new THREE.Mesh(CilindroLuz1);
+			var LuzPeque1 = new THREE.Mesh(CilindroLuz2);
+
+			//LUZ_3	
+			var Luzgrande2 = new THREE.Mesh(CilindroLuz1);
+			var LuzPeque2 = new THREE.Mesh(CilindroLuz2);
+
+			//LUZ_4	
+			var Luzgrande3 = new THREE.Mesh(CilindroLuz1);
+			var LuzPeque3 = new THREE.Mesh(CilindroLuz2);
+
+
+//---------------------------------------------------------------------------------------------------------
+
+            //CHASIS
+            var curve2D = [];
+                curve2D[0] = new THREE.Vector2( 2, 0 );
+                curve2D[1] = new THREE.Vector2( 2.8, .1 );
+                curve2D[2] = new THREE.Vector2( 3.1, 0.8 );
+                curve2D[3] = new THREE.Vector2( 4, 1.1 );
+                curve2D[4] = new THREE.Vector2( 4.7, 0.7 );
+                curve2D[5] = new THREE.Vector2( 4.9, 0 );
+                curve2D[6] = new THREE.Vector2( 6, 0 );
+                curve2D[7] = new THREE.Vector2( 5.8, 0.3 );
+                curve2D[8] = new THREE.Vector2( 5.8, 1 );
+                curve2D[9] = new THREE.Vector2( 5.6, 1.5 );
+                curve2D[10] = new THREE.Vector2( 4.5, 1.9 );
+                curve2D[11] = new THREE.Vector2( 1.5, 2.1 );
+                curve2D[12] = new THREE.Vector2( 1.3, 2.1 );
+                curve2D[13] = new THREE.Vector2( 0, 3 );
+                curve2D[14] = new THREE.Vector2( -.9, 3 );
+                curve2D[15] = new THREE.Vector2( -1.2, 2.95 );
+                curve2D[16] = new THREE.Vector2( -1.5, 2.9 );
+                curve2D[17] = new THREE.Vector2( -2, 2.8 );
+                curve2D[18] = new THREE.Vector2( -3, 2.6 );
+                curve2D[19] = new THREE.Vector2( -4.5, 2.4 );
+                curve2D[20] = new THREE.Vector2( -6, 2.25 );
+                curve2D[21] = new THREE.Vector2( -6.3, 1.3 );
+                curve2D[22] = new THREE.Vector2( -6.2, 0.1 );
+                curve2D[23] = new THREE.Vector2( -5.7, 0);
+                curve2D[24] = new THREE.Vector2( -5.1, 0);
+                curve2D[25] = new THREE.Vector2( -5, 0.1);
+                curve2D[26] = new THREE.Vector2( -4.8, 0.7);
+                curve2D[27] = new THREE.Vector2( -4, 1);
+                curve2D[28] = new THREE.Vector2( -3.3, 0.7);
+                curve2D[29] = new THREE.Vector2( -3, 0);
+				
+			var shape = new THREE.Shape();
+			shape.moveTo(-3,0);
+			shape.splineThru(curve2D);
+            
+            var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+            var resolution = 50;
+            var points = shape.getPoints( resolution );
+            var geometry = new THREE.BufferGeometry().setFromPoints( points );
+            // Create the final object to add to the scene
+            var curveObject = new THREE.Line( geometry, material );
+            
+			//EXTRUDE
+			var extrudeSettings = {
+				steps: 6,
+				amount: 5,
+				bevelEnabled: false,
+			};
+
+			var geometryExt = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+			var materialExt= new THREE.MeshStandardMaterial( { 
+				color: 0x000099, 
+				metalness: 0.5, 
+				roughness: 0.1,
+				opacity: 0.75,
+				transparent: true			
+			} );
+			
+			var Chasis = new THREE.Mesh( geometryExt, materialExt ) ;
+            Chasis.applyMatrix( new THREE.Matrix4().makeScale(3.5,3.2,3.2) );
+            Chasis.translateZ(-6)
+
+//--------------------------------------------------------------------------------------------------------
+
+
+			var VentanaLateral = [];
+                VentanaLateral[0] = new THREE.Vector2( 3.3, 6);
+				VentanaLateral[1] = new THREE.Vector2( 3.7, 6.1);
+				VentanaLateral[2] = new THREE.Vector2( 0.5, 9.1);
+				VentanaLateral[3] = new THREE.Vector2( -2, 9.5);
+				VentanaLateral[4] = new THREE.Vector2( -7.5, 8.3);
+				VentanaLateral[5] = new THREE.Vector2( -7.5, 6);
+				
+               
+              
+				
+			var shape_1 = new THREE.Shape();
+			shape_1.moveTo(0,6);
+			shape_1.splineThru(VentanaLateral);
+            
+            var materialVentana = new THREE.LineBasicMaterial( { color : 0xCC0000 } );
+            var resolution = 50;
+            var points_1 = shape_1.getPoints( resolution );
+            var geometry_1 = new THREE.BufferGeometry().setFromPoints( points_1 );
+            // Create the final object to add to the scene
+            var curveObject_1 = new THREE.Line( geometry_1, materialVentana );
+            
+			//EXTRUDE
+			var extrudeSettings_1 = {
+				steps: 6,
+				amount: 16,
+				bevelEnabled: false,
+			};
+
+			var geometryExt_1 = new THREE.ExtrudeGeometry( shape_1, extrudeSettings_1);
+			var materialExt_1= new THREE.MeshStandardMaterial( { 
+				color: 0xCC0000, 
+				metalness: 0.5, 
+				roughness: 0.1,
+				//opacity: 0.75,
+				//transparent: true			
+			} );
+			
+			var VentanaLateral_1 = new THREE.Mesh( geometryExt_1, material5 ) ;
+            //VentanaLateral_1.applyMatrix( new THREE.Matrix4().makeScale(3.5,3.2,3.2) );
+            VentanaLateral_1.translateZ(-6)
+
+			scene.add(VentanaLateral_1);
+			
+
+//---------------------------------------------------------------------------------------------------------
+
+			//CONVERTIR A CSG
+
+			//Placa
+			var RestaPlacaCSG = THREE.CSG.fromMesh(RestaPlaca);
+			var RestaPlaca1CSG = THREE.CSG.fromMesh(RestaPlaca1); 
+
+			//CHASIS
+			var ChasisCSG = THREE.CSG.fromMesh(Chasis);
+			var VentanaLateral_1CSG = THREE.CSG.fromMesh(VentanaLateral_1);
+
+			//VENTANAS
+			//FRONTAL
+			var VentanaFCSG = THREE.CSG.fromMesh(VentanaF);
+
+
+			//LLANTA_1
+			var LlantaCSG = THREE.CSG.fromMesh( Llanta );
+			var LlantaResCSG = THREE.CSG.fromMesh( LlantaRes );
+			var IntRinCSG = THREE.CSG.fromMesh(IntRin);
+
+			var Rin_1CSG = THREE.CSG.fromMesh(Rin_1);
+			var RinRes_1CSG = THREE.CSG.fromMesh(RinRes_1);
+
+			var Rin_2CSG = THREE.CSG.fromMesh(Rin_2);
+			var RinRes_2CSG = THREE.CSG.fromMesh(RinRes_2);
+
+			var Rin_3CSG = THREE.CSG.fromMesh(Rin_3);
+			var RinRes_3CSG = THREE.CSG.fromMesh(RinRes_3);
+
+			//LANTA_2
+			var Llanta_2CSG = THREE.CSG.fromMesh( Llanta_2 );
+			var LlantaRes_2CSG = THREE.CSG.fromMesh( LlantaRes_2 );
+			var IntRin_2CSG = THREE.CSG.fromMesh(IntRin_2);
+
+			var Rin_4CSG = THREE.CSG.fromMesh(Rin_4);
+			var RinRes_4CSG = THREE.CSG.fromMesh(RinRes_4);
+
+			var Rin_5CSG = THREE.CSG.fromMesh(Rin_5);
+			var RinRes_5CSG = THREE.CSG.fromMesh(RinRes_5);
+
+			var Rin_6CSG = THREE.CSG.fromMesh(Rin_6);
+			var RinRes_6CSG = THREE.CSG.fromMesh(RinRes_6);
+
+			//LANTA_3
+			var Llanta_3CSG = THREE.CSG.fromMesh( Llanta_3 );
+			var LlantaRes_3CSG = THREE.CSG.fromMesh( LlantaRes_3 );
+			var IntRin_3CSG = THREE.CSG.fromMesh(IntRin_3);
+
+			var Rin_7CSG = THREE.CSG.fromMesh(Rin_7);
+			var RinRes_7CSG = THREE.CSG.fromMesh(RinRes_7);
+
+			var Rin_8CSG = THREE.CSG.fromMesh(Rin_8);
+			var RinRes_8CSG = THREE.CSG.fromMesh(RinRes_8);
+
+			var Rin_9CSG = THREE.CSG.fromMesh(Rin_9);
+			var RinRes_9CSG = THREE.CSG.fromMesh(RinRes_9);
+
+			//LANTA_4
+			var Llanta_4CSG = THREE.CSG.fromMesh( Llanta_4 );
+			var LlantaRes_4CSG = THREE.CSG.fromMesh( LlantaRes_4 );
+			var IntRin_4CSG = THREE.CSG.fromMesh(IntRin_4);
+
+			var Rin_10CSG = THREE.CSG.fromMesh(Rin_10);
+			var RinRes_10CSG = THREE.CSG.fromMesh(RinRes_10);
+
+			var Rin_11CSG = THREE.CSG.fromMesh(Rin_11);
+			var RinRes_11CSG = THREE.CSG.fromMesh(RinRes_11);
+
+			var Rin_12CSG = THREE.CSG.fromMesh(Rin_12);
+			var RinRes_12CSG = THREE.CSG.fromMesh(RinRes_12);
+
+			//LUCES
+			//LUZ_1
+			var LuzgrandeCSG = THREE.CSG.fromMesh(Luzgrande);
+			var LuzPequeCSG = THREE.CSG.fromMesh(LuzPeque);
+
+			//LUZ_2
+			var Luzgrande1CSG = THREE.CSG.fromMesh(Luzgrande1);
+			var LuzPeque1CSG = THREE.CSG.fromMesh(LuzPeque1);
+
+			//LUZ_3
+			var Luzgrande2CSG = THREE.CSG.fromMesh(Luzgrande2);
+			var LuzPeque2CSG = THREE.CSG.fromMesh(LuzPeque2);
+
+			//LUZ_3
+			var Luzgrande3CSG = THREE.CSG.fromMesh(Luzgrande3);
+			var LuzPeque3CSG = THREE.CSG.fromMesh(LuzPeque3);
+
+			//LUZ DELANTERA 1
+			var RestaLuzCSG = THREE.CSG.fromMesh(RestaLuz);
+			//LUZ DELANTERA 2
+			var RestaLuz1CSG = THREE.CSG.fromMesh(RestaLuz1);
+
+			//FAROLES
+			var RestaFarolCSG = THREE.CSG.fromMesh(RestaFarol);
+			var RestaFarol1CSG = THREE.CSG.fromMesh(RestaFarol1);
+
+
+			//EXOSOTOS
+			var ExostoExCSG = THREE.CSG.fromMesh(ExostoEx);
+			var ExostoResCSG = THREE.CSG.fromMesh(ExostoRes);
+
+//----------------------------------------------------------------------------------------------------------
+			//APLICAR LAS OPERACIONES
+
+			//FAROLES
+			var result18 = RestaFarolCSG.intersect(RestaLuz1CSG);
+			var result19 = RestaFarol1CSG.intersect(RestaLuzCSG);
+
+
+			//LLANTA_1
+			var result = LlantaCSG.subtract(LlantaResCSG);			
+			var result1 = Rin_1CSG.subtract(RinRes_1CSG);
+			var result2 = Rin_2CSG.subtract(RinRes_2CSG);
+			var result3 = Rin_3CSG.subtract(RinRes_3CSG);
+
+			//LLANTA_2
+			var result4 = Llanta_2CSG.subtract(LlantaRes_2CSG);			
+			var result5 = Rin_4CSG.subtract(RinRes_4CSG);
+			var result6 = Rin_5CSG.subtract(RinRes_5CSG);
+			var result7 = Rin_6CSG.subtract(RinRes_6CSG);
+
+			//LLANTA_3
+			var result8 = Llanta_3CSG.subtract(LlantaRes_3CSG);			
+			var result9 = Rin_7CSG.subtract(RinRes_7CSG);
+			var result10 = Rin_8CSG.subtract(RinRes_8CSG);
+			var result11 = Rin_9CSG.subtract(RinRes_9CSG);
+
+			//LLANTA_4
+			var result12 = Llanta_4CSG.subtract(LlantaRes_4CSG);			
+			var result13 = Rin_10CSG.subtract(RinRes_10CSG);
+			var result14 = Rin_11CSG.subtract(RinRes_11CSG);
+			var result15 = Rin_12CSG.subtract(RinRes_12CSG);
+
+			//RESTAS AL CHASIS
+			var result16 = ChasisCSG.subtract(VentanaFCSG).subtract(RestaPlacaCSG).subtract(RestaPlaca1CSG).subtract(RestaLuzCSG).subtract(RestaLuz1CSG).subtract(VentanaLateral_1CSG);
+
+			//EXOSTOS
+			var result17 = ExostoExCSG.subtract(ExostoResCSG);
+			
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+			
+			//CONVERTIR A THREE
+
+
+			//CHASIS
+			Chasis = THREE.CSG.toMesh(result16);
+			Chasis.material = material3;
+
+			//FAROLES
+			RestaFarol = THREE.CSG.toMesh(result18);
+			RestaFarol.material = material5;
+
+			RestaFarol1 = THREE.CSG.toMesh(result19);
+			RestaFarol1.material = material5;
+
+			//EXOSTOS
+			ExostoEx = THREE.CSG.toMesh(result17);
+			ExostoEx.material = material1;
+
+			var ExostoEx1 = new THREE.CSG.toMesh(result17);
+			ExostoEx1.material = material1;
+
+			var ExostoEx2 = new THREE.CSG.toMesh(result17);
+			ExostoEx2.material = material1;
+
+			var ExostoEx3 = new THREE.CSG.toMesh(result17);
+			ExostoEx3.material = material1;
+
+			//LLANTAS
+			//LLANTA_1
+			Llanta = THREE.CSG.toMesh( result );
+			Llanta.material = material1;
+			IntRin.material = material1;
+
+			Rin_1 = THREE.CSG.toMesh(result1);
+			Rin_1.material = material1;
+			Rin_2 = THREE.CSG.toMesh(result2);
+			Rin_2.material = material1;
+			Rin_3 = THREE.CSG.toMesh(result3);
+			Rin_3.material = material1;
+								
+			//LANTA_2
+			Llanta_2 = THREE.CSG.toMesh( result4 );
+			Llanta_2.material = material1;
+			IntRin_2.material = material1;
+
+			Rin_4 = THREE.CSG.toMesh(result5);
+			Rin_4.material = material1;
+			Rin_5 = THREE.CSG.toMesh(result6);
+			Rin_5.material = material1;
+			Rin_6 = THREE.CSG.toMesh(result7);
+			Rin_6.material = material1;
+
+			//LANTA_3
+			Llanta_3 = THREE.CSG.toMesh( result8 );
+			Llanta_3.material = material1;
+			IntRin_3.material = material1;
+
+			Rin_7 = THREE.CSG.toMesh(result9);
+			Rin_7.material = material1;
+			Rin_8 = THREE.CSG.toMesh(result10);
+			Rin_8.material = material1;
+			Rin_9 = THREE.CSG.toMesh(result11);
+			Rin_9.material = material1;
+
+			//LANTA_4
+			Llanta_4 = THREE.CSG.toMesh( result12 );
+			Llanta_4.material = material1;
+			IntRin_4.material = material1;
+
+			Rin_10 = THREE.CSG.toMesh(result13);
+			Rin_10.material = material1;
+			Rin_11 = THREE.CSG.toMesh(result14);
+			Rin_11.material = material1;
+			Rin_12 = THREE.CSG.toMesh(result15);
+			Rin_12.material = material1;
+
+
+			//LUCES
+			//LUZ_1
+			LuzPeque.material = material4;
+			Luzgrande.material = material1;
+
+			//LUZ_2
+			LuzPeque1.material = material4;
+			Luzgrande1.material = material1;
+
+			//LUZ_3
+			LuzPeque2.material = material4;
+			Luzgrande2.material = material1;
+
+			LuzPeque3.material = material4;
+			Luzgrande3.material = material1;
+
+//-----------------------------------------------------------------------------------------------------------
+
+			//UBICACION LLANTAS
+			//LLANTA_1
+			IntRin.translateZ(8.7);
+			Llanta.translateZ(8.7);
+			Rin_1.translateZ(8.7);
+			Rin_2.translateZ(8.7);
+			Rin_3.translateZ(8.7);
+
+			IntRin.translateX(13.4);
+			Llanta.translateX(13.4);
+			Rin_1.translateX(13.4);
+			Rin_2.translateX(13.4);
+			Rin_3.translateX(13.4);
+
+		    IntRin.rotateX(1.57);
+			Llanta.rotateX(1.57);
+			Rin_1.rotateX(1.57);
+			Rin_2.rotateX(1.57);
+			Rin_3.rotateX(1.57);			
+
+			//LLANTA_2
+			IntRin_2.translateZ(-4.8);
+			Llanta_2.translateZ(-4.8);
+			Rin_4.translateZ(-4.8);
+			Rin_5.translateZ(-4.8);
+			Rin_6.translateZ(-4.8);
+
+			IntRin_2.translateX(13.4);
+			Llanta_2.translateX(13.4);
+			Rin_4.translateX(13.4);
+			Rin_5.translateX(13.4);
+			Rin_6.translateX(13.4);
+
+		    IntRin_2.rotateX(-1.57);
+			Llanta_2.rotateX(-1.57);
+			Rin_4.rotateX(-1.57);
+			Rin_5.rotateX(-1.57);
+			Rin_6.rotateX(-1.57);
+
+
+			//LLANTA_3
+			IntRin_3.translateZ(8.7);
+			Llanta_3.translateZ(8.7);
+			Rin_7.translateZ(8.7);
+			Rin_8.translateZ(8.7);
+			Rin_9.translateZ(8.7);
+
+			IntRin_3.translateX(-14.3);
+			Llanta_3.translateX(-14.3);
+			Rin_7.translateX(-14.3);
+			Rin_8.translateX(-14.3);
+			Rin_9.translateX(-14.3);
+
+		    IntRin_3.rotateX(1.57);
+			Llanta_3.rotateX(1.57);
+			Rin_7.rotateX(1.57);
+			Rin_8.rotateX(1.57);
+			Rin_9.rotateX(1.57);
+
+			//LLANTA_4
+			IntRin_4.translateZ(-4.8);
+			Llanta_4.translateZ(-4.8);
+			Rin_10.translateZ(-4.8);
+			Rin_11.translateZ(-4.8);
+			Rin_12.translateZ(-4.8);
+
+			IntRin_4.translateX(-14.3);
+			Llanta_4.translateX(-14.3);
+			Rin_10.translateX(-14.3);
+			Rin_11.translateX(-14.3);
+			Rin_12.translateX(-14.3);
+
+		    IntRin_4.rotateX(-1.57);
+			Llanta_4.rotateX(-1.57);
+			Rin_10.rotateX(-1.57);
+			Rin_11.rotateX(-1.57);
+			Rin_12.rotateX(-1.57);
+
+			//UBICACION LUCES 
+			//LUZ 1
+			Luzgrande.translateX(-21.5);
+			LuzPeque.translateX(-21.5);
+			LuzPeque.translateY(5.5);
+			Luzgrande.translateY(5.5);
+			Luzgrande.translateZ(-4.5);
+			LuzPeque.translateZ(-4.5);
+			Luzgrande.rotateZ(1.53);
+			LuzPeque.rotateZ(1.53);
+
+			//LUZ 2
+			Luzgrande1.translateX(-21.5);
+			LuzPeque1.translateX(-21.5);
+			LuzPeque1.translateY(5.5);
+			Luzgrande1.translateY(5.5);
+			Luzgrande1.translateZ(8.7);
+			LuzPeque1.translateZ(8.7);
+			Luzgrande1.rotateZ(1.53);
+			LuzPeque1.rotateZ(1.53);
+
+			//LUZ 3
+			Luzgrande2.translateX(-21.6);
+			LuzPeque2.translateX(-21.6);
+			LuzPeque2.translateY(5);
+			Luzgrande2.translateY(5);
+			Luzgrande2.translateZ(6.5);
+			LuzPeque2.translateZ(6.5);
+			Luzgrande2.rotateZ(1.53);
+			LuzPeque2.rotateZ(1.53);
+
+			//LUZ 4
+			Luzgrande3.translateX(-21.6);
+			LuzPeque3.translateX(-21.6);
+			LuzPeque3.translateY(5);
+			Luzgrande3.translateY(5);
+			Luzgrande3.translateZ(-2.2);
+			LuzPeque3.translateZ(-2.2);
+			Luzgrande3.rotateZ(1.53);
+			LuzPeque3.rotateZ(1.53);
+
+//-----------------------------------------------------------------------------------------------------------
+			//EXOSTOS
+			ExostoEx.translateX(-21.6);
+			ExostoEx.translateY(1);
+			ExostoEx.translateZ(-4.5);
+			ExostoEx.rotateZ(1.53);
+
+			ExostoEx1.translateX(-21.6);
+			ExostoEx1.translateY(1);
+			ExostoEx1.translateZ(-2.5);
+			ExostoEx1.rotateZ(1.53);
+
+			
+			ExostoEx2.translateX(-21.6);
+			ExostoEx2.translateY(1);
+			ExostoEx2.translateZ(8.7);
+			ExostoEx2.rotateZ(1.53);
+
+			
+			ExostoEx3.translateX(-21.6);
+			ExostoEx3.translateY(1);
+			ExostoEx3.translateZ(6.5);
+			ExostoEx3.rotateZ(1.53);
+
+
+//--------------------------------------------------------------------------------------------------------------			
+
+
+			//AGREGAR A LA ESCENA LOS DIFERENTES ELEMENTOS
+
+			//CHASIS 
+			scene.add( Chasis );
+
+			//EXOSOTOS
+			scene.add(ExostoEx);
+			scene.add(ExostoEx1);
+			scene.add(ExostoEx2);
+			scene.add(ExostoEx3);
+
+
+			//LLANTAS
+			//LLANTA_1
+			scene.add( Llanta);
+			scene.add(IntRin);
+			scene.add(Rin_1);
+			scene.add(Rin_2);
+			scene.add(Rin_3);
+
+			//LLANTA_2
+			scene.add( Llanta_2);
+			scene.add(IntRin_2);
+			scene.add(Rin_4);
+			scene.add(Rin_5);
+			scene.add(Rin_6);
+
+			//LLANTA_3
+			scene.add( Llanta_3);
+			scene.add(IntRin_3);
+			scene.add(Rin_7);
+			scene.add(Rin_8);
+			scene.add(Rin_9);
+
+			//LLANTA_4
+			scene.add( Llanta_4);
+			scene.add(IntRin_4);
+			scene.add(Rin_10);
+			scene.add(Rin_11);
+			scene.add(Rin_12); 
+
+			//LUCES
+			//LUZ_1
+			scene.add(LuzPeque);
+			scene.add(Luzgrande);
+
+			//LUZ_2
+			scene.add(LuzPeque1);
+			scene.add(Luzgrande1);
+
+			//LUZ_3
+			scene.add(LuzPeque2);
+			scene.add(Luzgrande2);
+
+			//LUZ_4
+			scene.add(LuzPeque3);
+			scene.add(Luzgrande3);
+
+			//LUCES DELANTERAS
+			scene.add(RestaFarol);
+			scene.add(RestaFarol1);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+			camera.position.x = 20;
+			camera.position.y = 5;
+		  	camera.position.z = 30;
+			camera.lookAt( origin );
+		}
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+			render();
+		}
+		function render(){
+			renderer.render( scene, camera );
+		}
+    </script>
+  </body>
+</html>
